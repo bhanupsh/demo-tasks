@@ -1,0 +1,17 @@
+#root {
+  max-width: 1280px;
+  padding: 2rem;
+}
+
+.comments_area{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.comments_area > div{
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
