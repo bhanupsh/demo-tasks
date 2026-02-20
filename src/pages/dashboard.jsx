@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import { fetchData } from "../utils/api";
+import * as constants from "../utils/constants";
 
 function Dashboard() {
   const [data, setData] = useState([]);
@@ -27,12 +28,8 @@ function Dashboard() {
     auth.removeUser();
     localStorage.clear();
 
-    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const logoutUri = "https://demo-tasks-drab.vercel.app/"; // Must match Cognito logout URL
-    const cognitoDomain = "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
-
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutUri
+    window.location.href = `${constants.cognitoDomain}/logout?client_id=${constants.clientId}&logout_uri=${encodeURIComponent(
+      constants.APP_URL
     )}`;
   };
 
