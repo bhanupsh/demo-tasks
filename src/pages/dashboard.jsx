@@ -1,48 +1,88 @@
+// Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import { fetchData } from '../utils/api';
+import { fetchData } from "../utils/api";
+import * as constants from "../utils/constants";
 
 function Dashboard() {
-  const [data, setData] = useState([]); // <-- initialize as array
+  const [data, setData] = useState([]); // data must be an array
   const auth = useAuth();
   const navigate = useNavigate();
-      
-  // Fetch data from API
+
+  // Fetch comments/data from API
   useEffect(() => {
     fetchData()
-      .then(data => {
-        console.log("Data from API:", data);
-        setData(data.comments || []); // <-- ensure it's always an array
+      .then((res) => {
+        console.log("Data from API:", res);
+        setData(res.comments || []); // always an array
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error fetching data:", error);
-        setData([]); // fallback to empty array
+        setData([]);
       });
   }, []);
 
-  // Redirect to home if logged out
+  // Redirect to home if user is not authenticated
   useEffect(() => {
     if (!auth.isAuthenticated) {
       navigate("/home", { replace: true });
     }
   }, [auth.isAuthenticated, navigate]);
 
+  // Proper Sign Out handling
+  const handleSignOut = () => {
+    // Remove user from react-oidc-context memory
+    auth.removeUser();
+
+    // Clear localStorage
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("idToken");
+    localStorage.removeItem("accessToken");
+
+    // Redirect to Cognito logout endpoint
+    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
+    const cognitoDomain =
+      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
+
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
+      constants.APP_URL + "/home"
+    )}`;
+  };
+
   return (
     <div>
       <h2>Dashboard</h2>
       <pre>Hello: {auth.user?.profile.email}</pre>
-      <button onClick={() => auth.removeUser()}>Sign Out</button>
+      <button onClick={handleSignOut}>Sign Out</button>
 
-      <div className='comments_area'>
-        {data.map((item, index) => (
-          <div key={index}>
-            {item.name} - {item.email} - 
-            <a href='#' onClick={() => console.log("Edit clicked for item:", item)}>Edit</a> - 
-            <a href="#" onClick={() => console.log("Delete clicked for item:", item)}>Delete</a>
-          </div>
-        ))}
-        {data.length === 0 && <p>No comments available.</p>}
+      <div className="comments_area">
+        {data.length > 0 ? (
+          data.map((item, index) => (
+            <div key={index}>
+              {item.name} - {item.email} -{" "}
+              <a
+                href="#"
+                onClick={() =>
+                  console.log("Edit clicked for item:", item)
+                }
+              >
+                Edit
+              </a>{" "}
+              -{" "}
+              <a
+                href="#"
+                onClick={() =>
+                  console.log("Delete clicked for item:", item)
+                }
+              >
+                Delete
+              </a>
+            </div>
+          ))
+        ) : (
+          <p>No comments available.</p>
+        )}
       </div>
     </div>
   );
