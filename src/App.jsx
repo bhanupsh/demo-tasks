@@ -4,7 +4,7 @@ import { useAuth } from "react-oidc-context";
 import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
 import Users from "./pages/Users";
-import Menu from "./components/menuenu";
+import Menu from "./components/menu";
 
 function App() {
   const auth = useAuth();
