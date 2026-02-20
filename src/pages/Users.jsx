@@ -5,15 +5,15 @@ import { useAuth } from "react-oidc-context";
 import { fetchData } from "../utils/api";
 import * as constants from "../utils/constants";
 
-function Dashboard() {
+function Users() {
   const [data, setData] = useState([]);
   const auth = useAuth();
   const navigate = useNavigate();
 
   // Fetch API data
   useEffect(() => {
-    fetchData('dashboard')
-      .then((res) => setData(res.comments || []))
+    fetchData('users')
+      .then((res) => setData(res.users || []))
       .catch(() => setData([]));
   }, []);
 
@@ -35,7 +35,7 @@ function Dashboard() {
 
   return (
     <div>
-      <h2>Dashboard</h2>
+      <h2>Users List</h2>
       <pre>Hello: {auth.user?.profile.email}</pre>
       <button onClick={handleSignOut}>Sign Out</button>
 
@@ -50,11 +50,11 @@ function Dashboard() {
             </div>
           ))
         ) : (
-          <p>No comments available.</p>
+          <p>No users available.</p>
         )}
       </div>
     </div>
   );
 }
 
-export default Dashboard;
+export default Users;

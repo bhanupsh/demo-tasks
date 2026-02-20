@@ -1,14 +1,14 @@
-// App.jsx
 import { useEffect } from "react";
 import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
+import Users from "./pages/Users";
+import Menu from "./components/menuenu";
 
 function App() {
   const auth = useAuth();
 
-  // Persist user session in localStorage
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
       localStorage.setItem("userEmail", auth.user.profile.email);
@@ -26,11 +26,16 @@ function App() {
 
   return (
     <Router>
+      <Menu />
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route
           path="/dashboard"
           element={auth.isAuthenticated ? <Dashboard /> : <Navigate to="/home" replace />}
+        />
+        <Route
+          path="/users"
+          element={auth.isAuthenticated ? <Users /> : <Navigate to="/home" replace />}
         />
         <Route path="/" element={<Navigate to="/home" replace />} />
       </Routes>
