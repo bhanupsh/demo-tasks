@@ -1,29 +1,45 @@
+// App.js
 
-import './App.css';
-
-import { Link, Routes, Route } from "react-router-dom";
-import { Home } from './pages/home';
-import { Login } from './pages/login';
-import { Dashboard } from './pages/dashboard';
+import { useAuth } from "react-oidc-context";
 
 function App() {
+  const auth = useAuth();
+
+  const signOutRedirect = () => {
+    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
+    const logoutUri = "https://demo-tasks-drab.vercel.app/";
+    const cognitoDomain = "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  };
+
+  if (auth.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (auth.error) {
+    return <div>Encountering error... {auth.error.message}</div>;
+  }
+
+  if (auth.isAuthenticated) {
+    return (
+      <div>
+        <pre> Hello: {auth.user?.profile.email} </pre>
+        <pre> ID Token: {auth.user?.id_token} </pre>
+        <pre> Access Token: {auth.user?.access_token} </pre>
+        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
+
+        <button onClick={() => auth.removeUser()}>Sign out</button>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <h1>Welcome to the Hackathon Project!</h1>
-      <nav>
-        <Link to="/">Home</Link> |{" "}
-        <Link to="/login">Login</Link> |{" "}
-        <Link to="/dashboard">Dashboard</Link>
-      </nav>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </>
-  )
+    <div>
+      <h2>Welcome to the Demo Tasks App</h2>
+      <button onClick={() => auth.signinRedirect()}>Sign in</button>
+      <button onClick={() => signOutRedirect()}>Sign out</button>
+    </div>
+  );
 }
 
-export default App
+export default App;
