@@ -1,8 +1,8 @@
 // App.jsx
 import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import Home from "./pages/home";
+import Home from "./pages/Home";
 import Dashboard from "./pages/dashboard";
 
 function App() {
