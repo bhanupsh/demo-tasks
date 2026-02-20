@@ -12,7 +12,7 @@ function Dashboard() {
 
   // Fetch API data
   useEffect(() => {
-    fetchData('dashboard2')
+    fetchData('dashboard')
       .then((res) => setData(res.comments || []))
       .catch(() => setData([]));
   }, []);
