@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { HashRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import Home from "./pages/Home";
+import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
 
 function App() {
