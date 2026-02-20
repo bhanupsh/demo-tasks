@@ -1,4 +1,4 @@
-// Dashboard.jsx
+// pages/Dashboard.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
@@ -6,7 +6,7 @@ import { fetchData } from "../utils/api";
 import * as constants from "../utils/constants";
 
 function Dashboard() {
-  const [data, setData] = useState([]); // data must be an array
+  const [data, setData] = useState([]); // ensure array for .map()
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ function Dashboard() {
     fetchData()
       .then((res) => {
         console.log("Data from API:", res);
-        setData(res.comments || []); // always an array
+        setData(res.comments || []); // fallback to empty array
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -31,23 +31,25 @@ function Dashboard() {
   }, [auth.isAuthenticated, navigate]);
 
   // Proper Sign Out handling
- const handleSignOut = () => {
-  auth.removeUser();
+  const handleSignOut = () => {
+    auth.removeUser(); // remove local session
 
-  // Clear localStorage
-  localStorage.removeItem("userEmail");
-  localStorage.removeItem("idToken");
-  localStorage.removeItem("accessToken");
+    // Clear localStorage
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("idToken");
+    localStorage.removeItem("accessToken");
 
-  // Proper logout redirect
-  const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-  const cognitoDomain =
-    "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
+    // Redirect to Cognito logout endpoint
+    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
+    const cognitoDomain =
+      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
 
-  const logoutRedirectUri = `${constants.APP_URL.replace(/\/$/, "")}/home`;
+    const logoutRedirectUri = `${constants.APP_URL.replace(/\/$/, "")}/home`;
 
-  window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirectUri)}`;
-};
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
+      logoutRedirectUri
+    )}`;
+  };
 
   return (
     <div>
@@ -60,23 +62,9 @@ function Dashboard() {
           data.map((item, index) => (
             <div key={index}>
               {item.name} - {item.email} -{" "}
-              <a
-                href="#"
-                onClick={() =>
-                  console.log("Edit clicked for item:", item)
-                }
-              >
-                Edit
-              </a>{" "}
+              <a href="#" onClick={() => console.log("Edit clicked:", item)}>Edit</a>{" "}
               -{" "}
-              <a
-                href="#"
-                onClick={() =>
-                  console.log("Delete clicked for item:", item)
-                }
-              >
-                Delete
-              </a>
+              <a href="#" onClick={() => console.log("Delete clicked:", item)}>Delete</a>
             </div>
           ))
         ) : (

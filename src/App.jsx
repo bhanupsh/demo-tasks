@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
+
 import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
 

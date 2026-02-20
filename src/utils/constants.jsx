@@ -1,2 +1,4 @@
+// utils/constants.js
 
-export const APP_URL = "https://demo-tasks-drab.vercel.app/";
+// Base URL of your app (no trailing slash!)
+export const APP_URL = "https://demo-tasks-drab.vercel.app";
