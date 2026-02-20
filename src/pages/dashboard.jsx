@@ -1,30 +1,39 @@
-
-import { useState, useEffect } from 'react'
+// Dashboard.jsx
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "react-oidc-context";
 import { fetchData } from '../utils/api';
 
+function Dashboard() {
 
-export const Dashboard = () => {
-
-    const [data, setData] = useState(0)
-    
-      useEffect(() => {
+  const [data, setData] = useState(0);
+  const auth = useAuth();
+  const navigate = useNavigate();
+      
+    useEffect(() => {
         fetchData()
-          .then(data => {
+        .then(data => {
             console.log("Data from API:", data);
             setData(data.comments);
-          })
-          .catch(error => {
+        })
+        .catch(error => {
             console.error("Error fetching data:", error);
-          });
-      }, []);
+        });
+    }, []);
 
-    return (
-        <div>   
-            <h2>Dashboard Page</h2>
-            <p>This is the dashboard page. You can add your dashboard content here.</p>
+  // Redirect to home if logged out
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate("/home", { replace: true });
+    }
+  }, [auth.isAuthenticated, navigate]);
 
-            {data && (
-        <div className='comments_area'>
+  return (
+    <div>
+      <h2>Dashboard</h2>
+      <pre>Hello: {auth.user?.profile.email}</pre>
+      <button onClick={() => auth.removeUser()}>Sign Out</button>
+      <div className='comments_area'>
           {data.map((item, index) => (
             <div key={index}>
                 {item.name} - 
@@ -34,7 +43,8 @@ export const Dashboard = () => {
             </div>
           ))}
         </div>
-      )}
-        </div>
-    );
+    </div>
+  );
 }
+
+export default Dashboard;

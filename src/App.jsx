@@ -1,6 +1,9 @@
+// App.jsx
 import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import * as constants from "./utils/constants";
+import Home from "./pages/home";
+import Dashboard from "./pages/dashboard";
 
 function App() {
   const auth = useAuth();
@@ -8,51 +11,32 @@ function App() {
   // Persist user session in localStorage
   useEffect(() => {
     if (auth.isAuthenticated && auth.user) {
-      // Save relevant user info
       localStorage.setItem("userEmail", auth.user.profile.email);
       localStorage.setItem("idToken", auth.user.id_token);
       localStorage.setItem("accessToken", auth.user.access_token);
     } else {
-      // Clear user info on logout
       localStorage.removeItem("userEmail");
       localStorage.removeItem("idToken");
       localStorage.removeItem("accessToken");
     }
   }, [auth.isAuthenticated, auth.user]);
 
-  const signOutRedirect = () => {
-    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const cognitoDomain =
-      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      constants.APP_URL
-    )}`;
-  };
-
-  if (auth.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (auth.error) {
-    return <div>Encountering error... {auth.error.message}</div>;
-  }
-
-  if (auth.isAuthenticated) {
-    return (
-      <div>
-        <pre>Hello: {auth.user?.profile.email}</pre>
-
-        <button onClick={() => auth.removeUser()}>Sign out</button>
-      </div>
-    );
-  }
+  if (auth.isLoading) return <div>Loading...</div>;
+  if (auth.error) return <div>Encountering error... {auth.error.message}</div>;
 
   return (
-    <div>
-      <h2>Welcome to the Demo Tasks App</h2>
-      <button onClick={() => auth.signinRedirect()}>Sign in</button>
-      <button onClick={() => signOutRedirect()}>Sign out</button>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/home" element={<Home />} />
+        <Route
+          path="/dashboard"
+          element={
+            auth.isAuthenticated ? <Dashboard /> : <Navigate to="/home" replace />
+          }
+        />
+        <Route path="/" element={<Navigate to="/home" replace />} />
+      </Routes>
+    </Router>
   );
 }
 
