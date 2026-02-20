@@ -1,15 +1,16 @@
 // App.js
 
 import { useAuth } from "react-oidc-context";
+import * as constants from "./utils/constants";
+
 
 function App() {
   const auth = useAuth();
 
   const signOutRedirect = () => {
     const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const logoutUri = "https://demo-tasks-drab.vercel.app/";
     const cognitoDomain = "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(constants.APP_URL)}`;
   };
 
   if (auth.isLoading) {
@@ -24,9 +25,9 @@ function App() {
     return (
       <div>
         <pre> Hello: {auth.user?.profile.email} </pre>
-        <pre> ID Token: {auth.user?.id_token} </pre>
+        {/* <pre> ID Token: {auth.user?.id_token} </pre>
         <pre> Access Token: {auth.user?.access_token} </pre>
-        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
+        <pre> Refresh Token: {auth.user?.refresh_token} </pre> */}
 
         <button onClick={() => auth.removeUser()}>Sign out</button>
       </div>
