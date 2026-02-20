@@ -31,24 +31,23 @@ function Dashboard() {
   }, [auth.isAuthenticated, navigate]);
 
   // Proper Sign Out handling
-  const handleSignOut = () => {
-    // Remove user from react-oidc-context memory
-    auth.removeUser();
+ const handleSignOut = () => {
+  auth.removeUser();
 
-    // Clear localStorage
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("idToken");
-    localStorage.removeItem("accessToken");
+  // Clear localStorage
+  localStorage.removeItem("userEmail");
+  localStorage.removeItem("idToken");
+  localStorage.removeItem("accessToken");
 
-    // Redirect to Cognito logout endpoint
-    const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const cognitoDomain =
-      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
+  // Proper logout redirect
+  const clientId = "2dhfmd1rd9gg903g310g5uuqog";
+  const cognitoDomain =
+    "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
 
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      constants.APP_URL + "/home"
-    )}`;
-  };
+  const logoutRedirectUri = `${constants.APP_URL.replace(/\/$/, "")}/home`;
+
+  window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirectUri)}`;
+};
 
   return (
     <div>
