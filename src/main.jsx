@@ -3,20 +3,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "react-oidc-context";
-import * as constants from "./utils/constants";
 
-// Cognito Auth config
+// Cognito configuration
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_si2vsazlq",
   client_id: "2dhfmd1rd9gg903g310g5uuqog",
-  redirect_uri: constants.APP_URL, // must match exactly with Cognito app client redirect URI
+  redirect_uri: "https://demo-tasks-drab.vercel.app/", // Must match Cognito Callback URL
   response_type: "code",
   scope: "email openid phone",
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
-// Wrap app with AuthProvider
 root.render(
   <React.StrictMode>
     <AuthProvider {...cognitoAuthConfig}>

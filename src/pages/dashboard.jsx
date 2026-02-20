@@ -3,51 +3,36 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
 import { fetchData } from "../utils/api";
-import * as constants from "../utils/constants";
 
 function Dashboard() {
-  const [data, setData] = useState([]); // ensure array for .map()
+  const [data, setData] = useState([]);
   const auth = useAuth();
   const navigate = useNavigate();
 
-  // Fetch comments/data from API
+  // Fetch API data
   useEffect(() => {
     fetchData()
-      .then((res) => {
-        console.log("Data from API:", res);
-        setData(res.comments || []); // fallback to empty array
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-        setData([]);
-      });
+      .then((res) => setData(res.comments || []))
+      .catch(() => setData([]));
   }, []);
 
-  // Redirect to home if user is not authenticated
+  // Redirect if not authenticated
   useEffect(() => {
     if (!auth.isAuthenticated) {
       navigate("/home", { replace: true });
     }
   }, [auth.isAuthenticated, navigate]);
 
-  // Proper Sign Out handling
   const handleSignOut = () => {
-    auth.removeUser(); // remove local session
+    auth.removeUser();
+    localStorage.clear();
 
-    // Clear localStorage
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("idToken");
-    localStorage.removeItem("accessToken");
-
-    // Redirect to Cognito logout endpoint
     const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const cognitoDomain =
-      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
-
-    const logoutRedirectUri = `${constants.APP_URL.replace(/\/$/, "")}/home`;
+    const logoutUri = "https://demo-tasks-drab.vercel.app/"; // Must match Cognito logout URL
+    const cognitoDomain = "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
 
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutRedirectUri
+      logoutUri
     )}`;
   };
 

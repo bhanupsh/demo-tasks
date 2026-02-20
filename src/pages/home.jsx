@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "react-oidc-context";
-import * as constants from "../utils/constants";
 
 function Home() {
   const auth = useAuth();
@@ -15,32 +14,22 @@ function Home() {
     }
   }, [auth.isAuthenticated, navigate]);
 
-  // Proper Sign Out handling
   const handleSignOut = () => {
     auth.removeUser(); // remove local session
+    localStorage.clear(); // clear all stored tokens
 
-    // Clear localStorage
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("idToken");
-    localStorage.removeItem("accessToken");
-
-    // Redirect to Cognito logout endpoint
     const clientId = "2dhfmd1rd9gg903g310g5uuqog";
-    const cognitoDomain =
-      "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
-
-    // Remove trailing slash to avoid double slash
-    const logoutRedirectUri = `${constants.APP_URL.replace(/\/$/, "")}/home`;
+    const logoutUri = "https://demo-tasks-drab.vercel.app/"; // Must match Cognito logout URL
+    const cognitoDomain = "https://ap-south-1si2vsazlq.auth.ap-south-1.amazoncognito.com";
 
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-      logoutRedirectUri
+      logoutUri
     )}`;
   };
 
   return (
     <div>
       <h2>Welcome to Home Page</h2>
-
       {auth.isAuthenticated ? (
         <div>
           <button onClick={() => navigate("/dashboard")}>Go to Dashboard</button>
